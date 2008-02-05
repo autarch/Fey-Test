@@ -12,6 +12,7 @@ use Fey::Schema;
 use Fey::Table;
 use List::MoreUtils qw( all );
 
+
 BEGIN
 {
     # This freaking module is reporting warnings from overload.pm,
@@ -20,6 +21,8 @@ BEGIN
 }
 
 use Test::MockObject;
+
+our $VERSION = 0.01;
 
 
 sub mock_test_schema
