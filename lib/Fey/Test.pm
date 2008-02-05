@@ -417,7 +417,8 @@ sub _mock_foreign_key_info
 }
 
 
-package Fey::Test::MockSTH;
+package # hide from PAUSE
+    Fey::Test::MockSTH;
 
 sub new
 {
