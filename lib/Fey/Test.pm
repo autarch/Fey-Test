@@ -21,7 +21,7 @@ BEGIN
 
 use Test::MockObject;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 
 sub mock_test_schema
@@ -338,7 +338,7 @@ sub _mock_primary_key_info
 
     my $x = 1;
     my @pk;
-    for my $pk ( $table->primary_key() )
+    for my $pk ( @{ $table->primary_key() } )
     {
         push @pk,
             { COLUMN_NAME => $pk->name(),
@@ -357,7 +357,7 @@ sub _mock_statistics_info
     my $table = $self->{__schema__}->table($table_name);
 
     my @ck;
-    for my $ck ( $table->candidate_keys() )
+    for my $ck ( @{ $table->candidate_keys() } )
     {
         my $x = 1;
         for my $col ( @{ $ck } )
@@ -383,7 +383,7 @@ sub _mock_foreign_key_info
     return unless $table;
 
     my @fk;
-    my %pk = map { $_->name() => 1 } $table->primary_key();
+    my %pk = map { $_->name() => 1 } @{ $table->primary_key() };
 
     for my $fk ( $self->{__schema__}->foreign_keys_for_table($table) )
     {
