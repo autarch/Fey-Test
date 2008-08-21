@@ -6,6 +6,7 @@ use warnings;
 use DBI;
 use File::Temp ();
 
+use Fey 0.10;
 use Fey::Column;
 use Fey::FK;
 use Fey::Schema;
