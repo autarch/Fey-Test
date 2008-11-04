@@ -27,7 +27,7 @@ our $VERSION = '0.05';
 
 sub mock_test_schema
 {
-    my $class    = shift;
+    my $class = shift;
 
     my $schema = Fey::Schema->new( name => 'Test' );
 
