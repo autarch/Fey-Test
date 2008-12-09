@@ -27,3 +27,5 @@
 \.(?:tar|tgz|tar\.gz)$
 
 \.shipit
+
+\.hg.*
