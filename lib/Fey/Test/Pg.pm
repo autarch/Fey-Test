@@ -10,7 +10,7 @@ BEGIN
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     unless ( eval { require DBD::Pg; 1 } )
     {
-        plan skip_all => 'These tests require DBD::mysql';
+        plan skip_all => 'These tests require DBD::Pg';
     }
 
     unless ( $ENV{FEY_MAINTAINER_TEST_PG} || -d '.hg' )
