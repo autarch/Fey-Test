@@ -5,7 +5,7 @@ use warnings;
 
 use Test::More;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 
 sub compare_schemas
