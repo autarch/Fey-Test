@@ -14,7 +14,6 @@ use Fey::Table;
 use List::MoreUtils qw( all );
 
 BEGIN {
-
     # This freaking module is reporting warnings from overload.pm,
     # which is calling can() as a method.
     $INC{'UNIVERSAL/can.pm'} = 1;
