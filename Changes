@@ -1,3 +1,9 @@
+0.08   2010-09-10
+
+- Added a missing dep on Test::MockObject. Reported by Phillip Moore. RT
+  #61247.
+
+
 0.07   2009-11-17
 
 - Made some changes to the schema definitions used to test Fey::Loader in
