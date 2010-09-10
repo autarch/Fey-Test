@@ -5,16 +5,13 @@ use warnings;
 
 use Test::More;
 
-BEGIN
-{
+BEGIN {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
-    unless ( eval { require DBD::mysql; 1 } )
-    {
+    unless ( eval { require DBD::mysql; 1 } ) {
         plan skip_all => 'These tests require DBD::mysql';
     }
 
-    unless ( $ENV{FEY_MAINTAINER_TEST_MYSQL} || -d '.hg' )
-    {
+    unless ( $ENV{FEY_MAINTAINER_TEST_MYSQL} || -d '.hg' ) {
         plan skip_all =>
             'These tests are only run if the FEY_MAINTAINER_TEST_MYSQL'
             . ' env var is true, or if being run from an SVN checkout dir.';
@@ -25,34 +22,30 @@ use DBI;
 use File::Spec;
 use File::Temp ();
 
-
 {
     my $DBH;
-    sub dbh
-    {
+
+    sub dbh {
         my $class = shift;
 
         return $DBH if $DBH;
 
-        my $dbh =
-            DBI->connect
-                ( 'dbi:mysql:', '', '', { PrintError => 0, RaiseError => 1 } );
+        my $dbh = DBI->connect( 'dbi:mysql:', '', '',
+            { PrintError => 0, RaiseError => 1 } );
 
         $dbh->func( 'dropdb', 'test_Fey', 'admin' );
 
         # The dropdb command apparently disconnects the handle.
-        $dbh =
-            DBI->connect
-                ( 'dbi:mysql:', '', '', { PrintError => 0, RaiseError => 1 } );
+        $dbh = DBI->connect( 'dbi:mysql:', '', '',
+            { PrintError => 0, RaiseError => 1 } );
 
         $dbh->func( 'createdb', 'test_Fey', 'admin' )
             or die $dbh->errstr();
 
-        $dbh =
-            DBI->connect
-                ( 'dbi:mysql:test_Fey', '', '', { PrintError => 0, RaiseError => 1 } );
+        $dbh = DBI->connect( 'dbi:mysql:test_Fey', '', '',
+            { PrintError => 0, RaiseError => 1 } );
 
-        $dbh->do( 'SET sql_mode = ANSI' );
+        $dbh->do('SET sql_mode = ANSI');
 
         $class->_run_ddl($dbh);
 
@@ -60,21 +53,18 @@ use File::Temp ();
     }
 }
 
-sub _run_ddl
-{
+sub _run_ddl {
     my $class = shift;
     my $dbh   = shift;
 
-    for my $ddl ( $class->_sql() )
-    {
+    for my $ddl ( $class->_sql() ) {
         $dbh->do($ddl);
     }
 }
 
-sub _sql
-{
-    return
-        ( <<'EOF',
+sub _sql {
+    return (
+        <<'EOF',
 CREATE TABLE User (
     user_id   integer       not null  auto_increment,
     username  varchar(255)  unique not null,
@@ -82,7 +72,7 @@ CREATE TABLE User (
     PRIMARY KEY (user_id)
 ) TYPE=INNODB
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE TABLE "Group" (
     group_id   integer       not null  auto_increment,
     name       varchar(255)  not null,
@@ -90,7 +80,7 @@ CREATE TABLE "Group" (
     UNIQUE (name)
 ) TYPE=INNODB
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE TABLE UserGroup (
     user_id   integer  not null,
     group_id  integer  not null,
@@ -99,7 +89,7 @@ CREATE TABLE UserGroup (
     FOREIGN KEY (group_id) REFERENCES "Group" (group_id)
 ) TYPE=INNODB
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE TABLE Message (
     message_id    INTEGER       NOT NULL  AUTO_INCREMENT,
     quality       DECIMAL(5,2)  NOT NULL  DEFAULT 2.3,
@@ -110,25 +100,26 @@ CREATE TABLE Message (
     PRIMARY KEY (message_id)
 ) TYPE=INNODB
 EOF
-          # This has to be done afterwards because the referenced
-          # column doesn't exist until the create table is finished,
-          # as far as mysql is concerned.
-          <<'EOF',
+
+        # This has to be done afterwards because the referenced
+        # column doesn't exist until the create table is finished,
+        # as far as mysql is concerned.
+        <<'EOF',
 ALTER TABLE Message
     ADD FOREIGN KEY (parent_message_id) REFERENCES Message (message_id)
 EOF
-          # I have no idea why this doesn't work when it's part of the
-          # CREATE for Message
-          <<'EOF',
+
+        # I have no idea why this doesn't work when it's part of the
+        # CREATE for Message
+        <<'EOF',
 ALTER TABLE Message
     ADD FOREIGN KEY (user_id) REFERENCES User (user_id)
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE VIEW TestView
          AS SELECT user_id FROM User
 EOF
-        );
+    );
 }
-
 
 1;

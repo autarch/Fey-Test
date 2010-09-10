@@ -5,10 +5,8 @@ use warnings;
 
 use Test::More;
 
-BEGIN
-{
-    unless ( eval 'use DBD::SQLite 1.14; 1' )
-    {
+BEGIN {
+    unless ( eval 'use DBD::SQLite 1.14; 1' ) {
         local $Test::Builder::Level = $Test::Builder::Level + 1;
         plan skip_all => 'These tests require DBD::SQLite 1.14+';
     }
@@ -18,12 +16,11 @@ use DBI;
 use File::Spec;
 use File::Temp ();
 
-
 {
     my $DBH;
     my $DSN;
-    sub dbh
-    {
+
+    sub dbh {
         my $class = shift;
 
         return $DBH if $DBH;
@@ -33,38 +30,32 @@ use File::Temp ();
 
         $DSN = "dbi:SQLite:dbname=$file";
 
-        my $dbh =
-            DBI->connect
-                ( $DSN, '', '', { RaiseError => 1 } );
+        my $dbh = DBI->connect( $DSN, '', '', { RaiseError => 1 } );
 
         $class->_run_ddl($dbh);
 
         return $DBH = $dbh;
     }
 
-    sub dsn
-    {
+    sub dsn {
         shift->dbh();
 
         return $DSN;
     }
 }
 
-sub _run_ddl
-{
+sub _run_ddl {
     my $class = shift;
     my $dbh   = shift;
 
-    for my $ddl ( $class->_sql() )
-    {
+    for my $ddl ( $class->_sql() ) {
         $dbh->do($ddl);
     }
 }
 
-sub _sql
-{
-    return
-        ( <<'EOF',
+sub _sql {
+    return (
+        <<'EOF',
 CREATE TABLE User (
     user_id   integer  not null  primary key autoincrement,
     username  text     not null,
@@ -72,21 +63,21 @@ CREATE TABLE User (
     UNIQUE (username)
 )
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE TABLE "Group" (
     group_id   integer  not null  primary key autoincrement,
     name       text     not null,
     UNIQUE (name)
 )
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE TABLE UserGroup (
     user_id   integer  not null,
     group_id  integer  not null,
     PRIMARY KEY (user_id, group_id)
 )
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE TABLE Message (
     message_id    INTEGER     NOT NULL  PRIMARY KEY AUTOINCREMENT,
     quality       REAL(5,2)   NOT NULL  DEFAULT 2.3,
@@ -96,12 +87,11 @@ CREATE TABLE Message (
     user_id       INTEGER     NOT NULL
 )
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE VIEW TestView
          AS SELECT user_id FROM User
 EOF
-        );
+    );
 }
-
 
 1;

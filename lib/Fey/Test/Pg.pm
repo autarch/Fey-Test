@@ -5,16 +5,13 @@ use warnings;
 
 use Test::More;
 
-BEGIN
-{
+BEGIN {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
-    unless ( eval { require DBD::Pg; 1 } )
-    {
+    unless ( eval { require DBD::Pg; 1 } ) {
         plan skip_all => 'These tests require DBD::Pg';
     }
 
-    unless ( $ENV{FEY_MAINTAINER_TEST_PG} || -d '.hg' )
-    {
+    unless ( $ENV{FEY_MAINTAINER_TEST_PG} || -d '.hg' ) {
         plan skip_all =>
             'These tests are only run if the FEY_MAINTAINER_TEST_PG'
             . ' env var is true, or if being run from an SVN checkout dir.';
@@ -25,25 +22,22 @@ use DBI;
 use File::Spec;
 use File::Temp ();
 
-
 {
     my $DBH;
-    sub dbh
-    {
+
+    sub dbh {
         my $class = shift;
 
         return $DBH if $DBH;
 
-        my $dbh =
-            DBI->connect
-                ( 'dbi:Pg:dbname=template1', '', '', { PrintError => 0, RaiseError => 1 } );
+        my $dbh = DBI->connect( 'dbi:Pg:dbname=template1', '', '',
+            { PrintError => 0, RaiseError => 1 } );
 
-        eval { $dbh->do( 'DROP DATABASE test_fey' ) };
-        $dbh->do( 'CREATE DATABASE test_fey' );
+        eval { $dbh->do('DROP DATABASE test_fey') };
+        $dbh->do('CREATE DATABASE test_fey');
 
-        $dbh =
-            DBI->connect
-                ( 'dbi:Pg:dbname=test_fey', '', '', { PrintError => 0, RaiseError => 1 } );
+        $dbh = DBI->connect( 'dbi:Pg:dbname=test_fey', '', '',
+            { PrintError => 0, RaiseError => 1 } );
 
         # Shuts up "NOTICE" warnings from Pg.
         local $dbh->{PrintWarn} = 0;
@@ -53,21 +47,18 @@ use File::Temp ();
     }
 }
 
-sub _run_ddl
-{
+sub _run_ddl {
     my $class = shift;
     my $dbh   = shift;
 
-    for my $ddl ( $class->_sql() )
-    {
+    for my $ddl ( $class->_sql() ) {
         $dbh->do($ddl);
     }
 }
 
-sub _sql
-{
-    return
-        ( <<'EOF',
+sub _sql {
+    return (
+        <<'EOF',
 CREATE TABLE "User" (
     user_id   serial   not null,
     username  text     unique not null,
@@ -75,7 +66,7 @@ CREATE TABLE "User" (
     PRIMARY KEY (user_id)
 )
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE TABLE "Group" (
     group_id   serial   not null,
     name       text     not null,
@@ -83,7 +74,7 @@ CREATE TABLE "Group" (
     UNIQUE (name)
 )
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE TABLE "UserGroup" (
     user_id   integer  not null,
     group_id  integer  not null,
@@ -92,7 +83,7 @@ CREATE TABLE "UserGroup" (
     FOREIGN KEY (group_id) REFERENCES "Group" (group_id)
 )
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE TABLE "Message" (
     message_id    SERIAL        NOT NULL,
     quality       DECIMAL(5,2)  NOT NULL  DEFAULT 2.3,
@@ -105,12 +96,11 @@ CREATE TABLE "Message" (
     FOREIGN KEY (user_id)           REFERENCES  "User"  (user_id)
 )
 EOF
-          <<'EOF',
+        <<'EOF',
 CREATE VIEW "TestView"
          AS SELECT user_id FROM "User"
 EOF
-        );
+    );
 }
-
 
 1;

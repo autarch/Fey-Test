@@ -13,8 +13,8 @@ use Fey::Schema;
 use Fey::Table;
 use List::MoreUtils qw( all );
 
-BEGIN
-{
+BEGIN {
+
     # This freaking module is reporting warnings from overload.pm,
     # which is calling can() as a method.
     $INC{'UNIVERSAL/can.pm'} = 1;
@@ -22,9 +22,7 @@ BEGIN
 
 use Test::MockObject;
 
-
-sub mock_test_schema
-{
+sub mock_test_schema {
     my $class = shift;
 
     my $schema = Fey::Schema->new( name => 'Test' );
@@ -40,60 +38,55 @@ sub mock_test_schema
     return $schema;
 }
 
-sub mock_test_schema_with_fks
-{
+sub mock_test_schema_with_fks {
     my $class  = shift;
     my $schema = $class->mock_test_schema(@_);
 
-    my $fk1 =
-        Fey::FK->new
-            ( source_columns => [ $schema->table('UserGroup')->column('user_id') ],
-              target_columns => [ $schema->table('User')->column('user_id') ],
-            );
+    my $fk1 = Fey::FK->new(
+        source_columns => [ $schema->table('UserGroup')->column('user_id') ],
+        target_columns => [ $schema->table('User')->column('user_id') ],
+    );
 
-    my $fk2 =
-        Fey::FK->new
-            ( source_columns => [ $schema->table('UserGroup')->column('group_id') ],
-              target_columns => [ $schema->table('Group')->column('group_id') ],
-            );
+    my $fk2 = Fey::FK->new(
+        source_columns => [ $schema->table('UserGroup')->column('group_id') ],
+        target_columns => [ $schema->table('Group')->column('group_id') ],
+    );
 
-    my $fk3 =
-        Fey::FK->new
-            ( source_columns => [ $schema->table('Message')->column('parent_message_id') ],
-              target_columns => [ $schema->table('Message')->column('message_id') ],
-            );
+    my $fk3 = Fey::FK->new(
+        source_columns =>
+            [ $schema->table('Message')->column('parent_message_id') ],
+        target_columns => [ $schema->table('Message')->column('message_id') ],
+    );
 
-    my $fk4 =
-        Fey::FK->new
-          ( source_columns => [ $schema->table('Message')->column('user_id') ],
-            target_columns => [ $schema->table('User')->column('user_id') ],
-          );
+    my $fk4 = Fey::FK->new(
+        source_columns => [ $schema->table('Message')->column('user_id') ],
+        target_columns => [ $schema->table('User')->column('user_id') ],
+    );
 
     $schema->add_foreign_key($_) for $fk1, $fk2, $fk3, $fk4;
 
     return $schema;
 }
 
-sub _user_table
-{
+sub _user_table {
     my $t = Fey::Table->new( name => 'User' );
 
-    my $user_id =
-        Fey::Column->new( name              => 'user_id',
-                          type              => 'integer',
-                          is_auto_increment => 1,
-                        );
+    my $user_id = Fey::Column->new(
+        name              => 'user_id',
+        type              => 'integer',
+        is_auto_increment => 1,
+    );
 
-    my $username =
-        Fey::Column->new( name => 'username',
-                          type => 'text',
-                        );
+    my $username = Fey::Column->new(
+        name => 'username',
+        type => 'text',
+    );
 
-    my $email =
-        Fey::Column->new( name        => 'email',
-                          type        => 'text',
-                          is_nullable => 1,
-                        );
+    my $email = Fey::Column->new(
+        name        => 'email',
+        type        => 'text',
+        is_nullable => 1,
+    );
 
     $t->add_column($_) for $user_id, $username, $email;
     $t->add_candidate_key($user_id);
@@ -102,20 +95,19 @@ sub _user_table
     return $t;
 }
 
-sub _group_table
-{
+sub _group_table {
     my $t = Fey::Table->new( name => 'Group' );
 
-    my $group_id =
-        Fey::Column->new( name              => 'group_id',
-                          type              => 'integer',
-                          is_auto_increment => 1,
-                        );
+    my $group_id = Fey::Column->new(
+        name              => 'group_id',
+        type              => 'integer',
+        is_auto_increment => 1,
+    );
 
-    my $name =
-        Fey::Column->new( name => 'name',
-                          type => 'text',
-                        );
+    my $name = Fey::Column->new(
+        name => 'name',
+        type => 'text',
+    );
 
     $t->add_column($_) for $group_id, $name;
     $t->add_candidate_key($group_id);
@@ -124,19 +116,18 @@ sub _group_table
     return $t;
 }
 
-sub _user_group_table
-{
+sub _user_group_table {
     my $t = Fey::Table->new( name => 'UserGroup' );
 
-    my $user_id =
-        Fey::Column->new( name => 'user_id',
-                          type => 'integer',
-                        );
+    my $user_id = Fey::Column->new(
+        name => 'user_id',
+        type => 'integer',
+    );
 
-    my $group_id =
-        Fey::Column->new( name => 'group_id',
-                          type => 'integer',
-                        );
+    my $group_id = Fey::Column->new(
+        name => 'group_id',
+        type => 'integer',
+    );
 
     $t->add_column($_) for $user_id, $group_id;
     $t->add_candidate_key( $user_id, $group_id );
@@ -144,56 +135,55 @@ sub _user_group_table
     return $t;
 }
 
-sub _message_table
-{
+sub _message_table {
     my $t = Fey::Table->new( name => 'Message' );
 
-    my $message_id =
-        Fey::Column->new( name              => 'message_id',
-                          type              => 'INTEGER',
-                          is_auto_increment => 1,
-                        );
+    my $message_id = Fey::Column->new(
+        name              => 'message_id',
+        type              => 'INTEGER',
+        is_auto_increment => 1,
+    );
 
-    my $message =
-        Fey::Column->new( name    => 'message',
-                          type    => 'TEXT',
-                          default => q{Some message '" text},
-                        );
+    my $message = Fey::Column->new(
+        name    => 'message',
+        type    => 'TEXT',
+        default => q{Some message '" text},
+    );
 
-    my $quality =
-        Fey::Column->new( name      => 'quality',
-                          type      => 'FLOAT',
-                          length    => 5,
-                          precision => 2,
-                          default   => 2.3,
-                        );
+    my $quality = Fey::Column->new(
+        name      => 'quality',
+        type      => 'FLOAT',
+        length    => 5,
+        precision => 2,
+        default   => 2.3,
+    );
 
-    my $message_date =
-        Fey::Column->new( name    => 'message_date',
-                          type    => 'DATE',
-                          default => Fey::Literal::Function->new('NOW'),
-                        );
+    my $message_date = Fey::Column->new(
+        name    => 'message_date',
+        type    => 'DATE',
+        default => Fey::Literal::Function->new('NOW'),
+    );
 
-    my $parent_message_id =
-        Fey::Column->new( name        => 'parent_message_id',
-                          type        => 'INTEGER',
-                          is_nullable => 1,
-                        );
+    my $parent_message_id = Fey::Column->new(
+        name        => 'parent_message_id',
+        type        => 'INTEGER',
+        is_nullable => 1,
+    );
 
-    my $user_id =
-        Fey::Column->new( name => 'user_id',
-                          type => 'INTEGER',
-                        );
+    my $user_id = Fey::Column->new(
+        name => 'user_id',
+        type => 'INTEGER',
+    );
 
     $t->add_column($_)
-        for $message_id, $message, $quality, $message_date, $parent_message_id, $user_id;
+        for $message_id, $message, $quality, $message_date,
+        $parent_message_id, $user_id;
     $t->add_candidate_key($message_id);
 
     return $t;
 }
 
-sub mock_dbh
-{
+sub mock_dbh {
     my $mock = Test::MockObject->new();
 
     $mock->set_isa('DBI::db');
@@ -224,34 +214,31 @@ sub mock_dbh
 }
 
 {
-    my %Info = ( 29 => q{"},
-                 41 => q{.},
-               );
-    sub _mock_get_info
-    {
+    my %Info = (
+        29 => q{"},
+        41 => q{.},
+    );
+
+    sub _mock_get_info {
         my $self = shift;
         my $num  = shift;
 
-        return $Info{$num}
+        return $Info{$num};
     }
 }
 
-sub _mock_quote_identifier
-{
+sub _mock_quote_identifier {
     shift;
 
-    if ( @_ == 3 )
-    {
-        return q{"} . $_[1] . q{"} . q{.} . q{"} . $_[2] . q{"}
+    if ( @_ == 3 ) {
+        return q{"} . $_[1] . q{"} . q{.} . q{"} . $_[2] . q{"};
     }
-    else
-    {
+    else {
         return q{"} . $_[0] . q{"};
     }
 }
 
-sub _mock_quote
-{
+sub _mock_quote {
     my $self = shift;
     my $str  = shift;
 
@@ -262,20 +249,20 @@ sub _mock_quote
     return "$q$str$q";
 }
 
-sub _mock_table_info
-{
+sub _mock_table_info {
     my $self = shift;
 
-    unless ( $self->{__schema__}->table('TestView') )
-    {
-        my $table = Fey::Table->new( name    => 'TestView',
-                                     is_view => 1,
-                                   );
+    unless ( $self->{__schema__}->table('TestView') ) {
+        my $table = Fey::Table->new(
+            name    => 'TestView',
+            is_view => 1,
+        );
 
-        my $col = Fey::Column->new( name         => 'user_id',
-                                    type         => 'integer',
-                                    generic_type => 'integer',
-                                  );
+        my $col = Fey::Column->new(
+            name         => 'user_id',
+            type         => 'integer',
+            generic_type => 'integer',
+        );
 
         $table->add_column($col);
         $table->add_candidate_key($col);
@@ -284,19 +271,17 @@ sub _mock_table_info
     }
 
     my @tables;
-    for my $table ( $self->{__schema__}->tables() )
-    {
-        push @tables,
-            { TABLE_NAME => $table->name(),
-              TABLE_TYPE => ( $table->is_view() ? 'VIEW' : 'TABLE'),
+    for my $table ( $self->{__schema__}->tables() ) {
+        push @tables, {
+            TABLE_NAME => $table->name(),
+            TABLE_TYPE => ( $table->is_view() ? 'VIEW' : 'TABLE' ),
             };
     }
 
-    return Fey::Test::MockSTH->new(\@tables);
+    return Fey::Test::MockSTH->new( \@tables );
 }
 
-sub _mock_column_info
-{
+sub _mock_column_info {
     my $self       = shift;
     my $table_name = $_[2];
 
@@ -305,13 +290,12 @@ sub _mock_column_info
     return Fey::Test::MockSTH->new() unless $table;
 
     my @columns;
-    for my $col ( $table->columns() )
-    {
-        my %col =
-            ( COLUMN_NAME => $col->name(),
-              TYPE_NAME   => $col->type(),
-              NULLABLE    => $col->is_nullable(),
-            );
+    for my $col ( $table->columns() ) {
+        my %col = (
+            COLUMN_NAME => $col->name(),
+            TYPE_NAME   => $col->type(),
+            NULLABLE    => $col->is_nullable(),
+        );
 
         $col{COLUMN_SIZE} = $col->length()
             if defined $col->length();
@@ -325,11 +309,10 @@ sub _mock_column_info
         push @columns, \%col;
     }
 
-    return Fey::Test::MockSTH->new(\@columns);
+    return Fey::Test::MockSTH->new( \@columns );
 }
 
-sub _mock_primary_key_info
-{
+sub _mock_primary_key_info {
     my $self       = shift;
     my $table_name = $_[2];
 
@@ -337,43 +320,38 @@ sub _mock_primary_key_info
 
     my $x = 1;
     my @pk;
-    for my $pk ( @{ $table->primary_key() } )
-    {
-        push @pk,
-            { COLUMN_NAME => $pk->name(),
-              KEY_SEQ     => $x++,
+    for my $pk ( @{ $table->primary_key() } ) {
+        push @pk, {
+            COLUMN_NAME => $pk->name(),
+            KEY_SEQ     => $x++,
             };
     }
 
-    return Fey::Test::MockSTH->new(\@pk);
+    return Fey::Test::MockSTH->new( \@pk );
 }
 
-sub _mock_statistics_info
-{
+sub _mock_statistics_info {
     my $self       = shift;
     my $table_name = $_[2];
 
     my $table = $self->{__schema__}->table($table_name);
 
     my @ck;
-    for my $ck ( @{ $table->candidate_keys() } )
-    {
+    for my $ck ( @{ $table->candidate_keys() } ) {
         my $x = 1;
-        for my $col ( @{ $ck } )
-        {
-            push @ck,
-                { INDEX_NAME       => $table_name . $ck,
-                  COLUMN_NAME      => $col->name(),
-                  ORDINAL_POSITION => $x++,
+        for my $col ( @{$ck} ) {
+            push @ck, {
+                INDEX_NAME       => $table_name . $ck,
+                COLUMN_NAME      => $col->name(),
+                ORDINAL_POSITION => $x++,
                 };
         }
     }
 
-    return Fey::Test::MockSTH->new(\@ck);
+    return Fey::Test::MockSTH->new( \@ck );
 }
 
-sub _mock_foreign_key_info
-{
+sub _mock_foreign_key_info {
     my $self       = shift;
     my $table_name = $_[2];
 
@@ -384,57 +362,51 @@ sub _mock_foreign_key_info
     my @fk;
     my %pk = map { $_->name() => 1 } @{ $table->primary_key() };
 
-    for my $fk ( $self->{__schema__}->foreign_keys_for_table($table) )
-    {
+    for my $fk ( $self->{__schema__}->foreign_keys_for_table($table) ) {
         my @source = @{ $fk->source_columns() };
 
-        next if
-            @source == keys %pk
-            && all { $pk{ $_->name() } } @source;
+        next
+            if @source == keys %pk
+                && all { $pk{ $_->name() } } @source;
 
         my @target = @{ $fk->target_columns() };
 
-        for ( my $x = 0; $x < @source; $x++ )
-        {
-            push @fk,
-               { ORDINAL_POSITION => $x + 1,
-                 UK_TABLE_NAME    => $target[$x]->table()->name(),
-                 UK_COLUMN_NAME   => $target[$x]->name(),
-                 FK_TABLE_NAME    => $source[$x]->table()->name(),
-                 FK_COLUMN_NAME   => $source[$x]->name(),
-                 FK_NAME          =>
-                     ( join '_', map { $_->name() }
-                       $source[$x]->table(), $source[$x],
-                       $target[$x]->table(), $target[$x],
-                     )
-               };
+        for ( my $x = 0; $x < @source; $x++ ) {
+            push @fk, {
+                ORDINAL_POSITION => $x + 1,
+                UK_TABLE_NAME    => $target[$x]->table()->name(),
+                UK_COLUMN_NAME   => $target[$x]->name(),
+                FK_TABLE_NAME    => $source[$x]->table()->name(),
+                FK_COLUMN_NAME   => $source[$x]->name(),
+                FK_NAME          => (
+                    join '_',                 map { $_->name() }
+                        $source[$x]->table(), $source[$x],
+                    $target[$x]->table(), $target[$x],
+                )
+                };
         }
     }
 
-    return Fey::Test::MockSTH->new(\@fk);
+    return Fey::Test::MockSTH->new( \@fk );
 }
 
-
-package # hide from PAUSE
+package    # hide from PAUSE
     Fey::Test::MockSTH;
 
-sub new
-{
+sub new {
     my $class = shift;
-    my $rows  = shift || [];
+    my $rows = shift || [];
 
     return bless $rows, $class;
 }
 
-sub fetchrow_hashref
-{
+sub fetchrow_hashref {
     my $self = shift;
 
     return unless @{$self};
 
     return shift @{$self};
 }
-
 
 1;
 
