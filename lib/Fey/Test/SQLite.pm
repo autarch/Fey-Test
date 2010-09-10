@@ -5,8 +5,6 @@ use warnings;
 
 use Test::More;
 
-our $VERSION = '0.07';
-
 BEGIN
 {
     unless ( eval 'use DBD::SQLite 1.14; 1' )
@@ -107,5 +105,3 @@ EOF
 
 
 1;
-
-__END__

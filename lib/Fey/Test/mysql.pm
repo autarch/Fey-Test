@@ -5,8 +5,6 @@ use warnings;
 
 use Test::More;
 
-our $VERSION = '0.07';
-
 BEGIN
 {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
@@ -134,5 +132,3 @@ EOF
 
 
 1;
-
-__END__

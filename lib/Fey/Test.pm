@@ -22,8 +22,6 @@ BEGIN
 
 use Test::MockObject;
 
-our $VERSION = '0.07';
-
 
 sub mock_test_schema
 {
@@ -440,11 +438,9 @@ sub fetchrow_hashref
 
 1;
 
+# ABSTRACT: Test libraries for Fey distros
+
 __END__
-
-=head1 NAME
-
-Fey::Test - Test libraries for Fey distros
 
 =head1 SYNOPSIS
 
@@ -455,22 +451,11 @@ Fey::Test - Test libraries for Fey distros
 This distribution contains libraries used for testing various Fey
 distributions.
 
-=head1 AUTHOR
-
-Dave Rolsky, <autarch@urth.org>
-
 =head1 BUGS
 
 Please report any bugs or feature requests to
 C<bug-fey-test@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2006-2008 Dave Rolsky, All Rights Reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
 
 =cut
