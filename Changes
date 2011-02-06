@@ -1,3 +1,8 @@
+0.09   2011-02-06
+
+- Pg and mysql tests are now run when Fey::Loader tests are run via dzil.
+
+
 0.08   2010-09-10
 
 - Added a missing dep on Test::MockObject. Reported by Phillip Moore. RT
