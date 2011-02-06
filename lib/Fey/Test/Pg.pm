@@ -11,9 +11,9 @@ BEGIN {
         plan skip_all => 'These tests require DBD::Pg';
     }
 
-    unless ( $ENV{FEY_MAINTAINER_TEST_PG} || -d '.hg' ) {
+    unless ( $ENV{RELEASE_TESTING} || $ENV{AUTHOR_TESTING} || -d '.hg' ) {
         plan skip_all =>
-            'These tests are only run if the FEY_MAINTAINER_TEST_PG'
+            'These tests are only run if either the RELEASE_TESTING or AUTHOR_TESTING'
             . ' env var is true, or if being run from a Mercurial checkout dir.';
     }
 }
