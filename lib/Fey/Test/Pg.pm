@@ -14,7 +14,7 @@ BEGIN {
     unless ( $ENV{FEY_MAINTAINER_TEST_PG} || -d '.hg' ) {
         plan skip_all =>
             'These tests are only run if the FEY_MAINTAINER_TEST_PG'
-            . ' env var is true, or if being run from an SVN checkout dir.';
+            . ' env var is true, or if being run from a Mercurial checkout dir.';
     }
 }
 
