@@ -24,14 +24,18 @@ use File::Temp ();
 
         return $DBH if $DBH;
 
-        my $dbh = DBI->connect( 'dbi:Pg:dbname=template1', '', '',
-            { PrintError => 0, RaiseError => 1 } );
+        my $dbh = DBI->connect(
+            'dbi:Pg:dbname=template1', q{}, q{},
+            { PrintError => 0, RaiseError => 1 }
+        );
 
         eval { $dbh->do('DROP DATABASE test_fey') };
         $dbh->do('CREATE DATABASE test_fey');
 
-        $dbh = DBI->connect( 'dbi:Pg:dbname=test_fey', '', '',
-            { PrintError => 0, RaiseError => 1 } );
+        $dbh = DBI->connect(
+            'dbi:Pg:dbname=test_fey', q{}, q{},
+            { PrintError => 0, RaiseError => 1 }
+        );
 
         # Shuts up "NOTICE" warnings from Pg.
         local $dbh->{PrintWarn} = 0;

@@ -24,20 +24,26 @@ use File::Temp ();
 
         return $DBH if $DBH;
 
-        my $dbh = DBI->connect( 'dbi:mysql:', '', '',
-            { PrintError => 0, RaiseError => 1 } );
+        my $dbh = DBI->connect(
+            'dbi:mysql:', q{}, q{},
+            { PrintError => 0, RaiseError => 1 }
+        );
 
         $dbh->func( 'dropdb', 'test_Fey', 'admin' );
 
         # The dropdb command apparently disconnects the handle.
-        $dbh = DBI->connect( 'dbi:mysql:', '', '',
-            { PrintError => 0, RaiseError => 1 } );
+        $dbh = DBI->connect(
+            'dbi:mysql:', q{}, q{},
+            { PrintError => 0, RaiseError => 1 }
+        );
 
         $dbh->func( 'createdb', 'test_Fey', 'admin' )
             or die $dbh->errstr();
 
-        $dbh = DBI->connect( 'dbi:mysql:test_Fey', '', '',
-            { PrintError => 0, RaiseError => 1 } );
+        $dbh = DBI->connect(
+            'dbi:mysql:test_Fey', q{}, q{},
+            { PrintError => 0, RaiseError => 1 }
+        );
 
         $dbh->do('SET sql_mode = ANSI');
 
