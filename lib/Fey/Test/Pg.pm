@@ -10,12 +10,6 @@ BEGIN {
     unless ( eval { require DBD::Pg; 1 } ) {
         plan skip_all => 'These tests require DBD::Pg';
     }
-
-    unless ( $ENV{RELEASE_TESTING} || $ENV{AUTHOR_TESTING} || -d '.hg' ) {
-        plan skip_all =>
-            'These tests are only run if either the RELEASE_TESTING or AUTHOR_TESTING'
-            . ' env var is true, or if being run from a Mercurial checkout dir.';
-    }
 }
 
 use DBI;
