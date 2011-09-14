@@ -129,12 +129,16 @@ sub compare_columns {
             qw( type generic_type length precision
             is_nullable is_auto_increment )
             ) {
+
+            my $got = $col1->$meth();
             my $expect
                 = exists $override->{$fq_name}{$meth}
                 ? $override->{$fq_name}{$meth}
                 : $col2->$meth();
+
             is(
-                lc $col1->$meth(), lc $expect,
+                ( defined $got    ? lc $got    : undef ),
+                ( defined $expect ? lc $expect : undef ),
                 "schemas agree on $meth for $fq_name"
             );
         }
