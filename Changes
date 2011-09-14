@@ -1,3 +1,8 @@
+{{$NEXT}}
+
+- Shut up some uninit value warnings.
+
+
 0.09   2011-02-06
 
 - Pg and mysql tests are now run when Fey::Loader tests are run via dzil.
